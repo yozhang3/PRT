@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    .slidecontainer {
+      width: 100%; /* Width of the outside container */
+      height: 75px;
+    }
+    .slider {
+      -webkit-appearance: none;  /* Override default CSS styles */
+      appearance: none;
+      width: 60%; /* Full-width */
+      height: 25px; /* Specified height */
+      background: #d3d3d3; /* Grey background */
+      outline: none; /* Remove outline */
+      opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+      -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+      transition: opacity .2s;
+    }
+    .slider:hover {
+      opacity: 1; /* Fully shown on mouse-over */
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      appearance: none;
+      width: 30%; /* Set a specific slider handle width */
+      height: 25px; /* Slider handle height */
+      background: #04AA6D; /* Green background */
+      cursor: pointer; /* Cursor on hover */
+    }
+    .bubble {
+      width: 30px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      background: orange;
+      color: black;
+      font-size: 12px;
+      display: block;
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+      margin-top: 10px;
+      border-radius: 6px;
+    }
+    .bubble:before{
+      content: "";
+      position: absolute;
+      width: 0px;
+      height: 0px;
+      border-bottom: 10px solid orange;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      top: -30%;
+      left: 50%;
+      margin-left: -5px;
+      margin-top: -1px;
+    }
+    html, body {
+        height: 90%;
+        background-image: url("background.jpeg");
+        margin: 0;         /* Reset default margin on the body element */
+    }
+    </style>
+  </head>
+  <body>
+
+    <div id="chooseTime" class="tabcontent">
+      <h2 style="text-align:center;">What are the logs you are interested in?</h2>
+
+      <p style="text-align:center;">Please slide the green bar to set the startpoint for the output log messages:</p>
+
+      <form
+        enctype="multipart/form-data"
+        action="/chooseTime"
+        method="POST"
+        style="text-align:center;"
+      >
+      <div class="slidecontainer">
+        <!-- <div class="bubble" id="rangeV"></div> -->
+        <input type="range" class="slider" id="start_time" name="start_time" min="1" max="300" step="0.01" value="300">
+        <output class="bubble" id="bubble"></output>
+      </div>
+        <!-- <label for="start_time">From:</label>
+        <input type="datetime-local" id="start_time" name="start_time" min="" max="" value="">
+        <label for="stop_time">To:</label>
+        <input type="datetime-local" id="stop_time" name="stop_time" min="" max="" value=""> -->
+        <input type="hidden" id="prt_folder" name="prt_folder" value="">
+        <input type="submit" value="Submit">
+      </form>
+
+      <p id="notes" style="text-align:center;"><strong>Note:</strong> This PRT file contains about hour log messages, to reduce overall network traffic volume, the green bar would contain about hour log messages.</p>
+
+    </div>
+  </body>
+  <script>
+    const
+    range = document.getElementById('start_time'),
+    rangeV = document.getElementById('bubble'),
+    setValue = ()=>{
+      const
+      newValue = Number( (range.value - range.min) * 100 / (range.max - range.min) );
+      rangeV.innerHTML = `<span>${range.value}</span>`;
+      rangeV.style.left = `calc(20% + ${newValue}% * 0.42)`;
+    };
+    document.addEventListener("DOMContentLoaded", setValue);
+    range.addEventListener('input', setValue);
+  </script>
+</html>

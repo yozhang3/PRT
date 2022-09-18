@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    .tablink {
+      background-color: #555;
+      color: white;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 10px 10px;
+      font-size: 12px;
+      width: 10%;
+    }
+
+    .tablink:hover {
+      background-color: #777;
+    }
+    .tablink1 {
+      background-color: #555;
+      color: white;
+      float: right;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 10px 10px;
+      font-size: 12px;
+      width: 10%;
+    }
+
+    .tablink1:hover {
+      background-color: #777;
+    }
+
+    .tabcontent {
+      color: black;
+      display: none;
+      padding: 100px 0px;
+      height: 100%;
+    }
+    .slidecontainer {
+      width: 100%; /* Width of the outside container */
+      height: 75px;
+    }
+    .slider {
+      -webkit-appearance: none;  /* Override default CSS styles */
+      appearance: none;
+      width: 60%; /* Full-width */
+      height: 25px; /* Specified height */
+      background: #d3d3d3; /* Grey background */
+      outline: none; /* Remove outline */
+      opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+      -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+      transition: opacity .2s;
+    }
+    .slider:hover {
+      opacity: 1; /* Fully shown on mouse-over */
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      appearance: none;
+      width: 30%; /* Set a specific slider handle width */
+      height: 25px; /* Slider handle height */
+      background: #04AA6D; /* Green background */
+      cursor: pointer; /* Cursor on hover */
+    }
+    .bubble {
+      width: 30px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      background: orange;
+      color: black;
+      font-size: 12px;
+      display: block;
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+      margin-top: 10px;
+      border-radius: 6px;
+    }
+    .bubble:before{
+      content: "";
+      position: absolute;
+      width: 0px;
+      height: 0px;
+      border-bottom: 10px solid orange;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      top: -30%;
+      left: 50%;
+      margin-left: -5px;
+      margin-top: -1px;
+    }
+    html, body {
+        height: 90%;
+        background-image: url("background.jpeg");
+        margin: 0;         /* Reset default margin on the body element */
+    }
+    iframe {
+        display: block;       /* iframes are inline by default */
+        background: white;
+        border: none;         /* Reset default border */
+        width: 100%;
+        height: 100%;
+        allowtransparency: True
+    }
+    #Home {background-color: white;}
+    #News {background-color: white;}
+    #Contact {background-color: white;}
+    #About {background-color: white;}
+    </style>
+    <!-- <link rel="shortcut icon" href="#" /> -->
+  </head>
+  <body>
+    <div id="topnav">
+      <button class="tablink" onclick="openPage('description.log', this, 'blue')">PhoneInfo</button>
+      <button class="tablink" onclick="openPage('status.xml', this, 'blue')">Status</button>
+      <button class="tablink" onclick="openPage('cfg.xml', this, 'blue')">Config</button>
+      <button class="tablink" onclick="openPage('net.cfg', this, 'blue')">Network</button>
+      <button class="tablink" onclick="openPage('tech.log', this, 'blue')">TechInfo</button>
+      <button class="tablink" onclick="openPage('sipmsgs.html', this, 'green')" id="defaultOpen">SIP</button>
+      <button class="tablink" onclick="openPage('allmsgs.html', this, 'green')">AllMsgs</button>
+      <button class="tablink1" onclick="chooseTime(this, 'orange')">Choose Time</button>
+    </div>
+    <div id="message_iframe" class="tabcontent">
+      <iframe src=""
+              name="htmlfiles"
+              id="htmlfiles"
+              allowtransparency = "False"
+              height="600" width="1000"
+              align="right" align="top"
+              title="Iframe Example"></iframe>
+    </div>
+
+    <div id="chooseTime" class="tabcontent">
+      <h2 style="text-align:center;">What are the logs you are interested in?</h2>
+
+      <p style="text-align:center;">Please slide to choose the time segment for the logs:</p>
+
+      <form
+        enctype="multipart/form-data"
+        action="/chooseTime"
+        method="POST"
+        style="text-align:center;"
+      >
+      <div class="slidecontainer">
+        <input type="range" class="slider" id="start_time" name="start_time" min="" max="" step="0.01" value="">
+        <output class="bubble" id="bubble"></output>
+      </div>
+        <!-- <label for="start_time">From:</label>
+        <input type="datetime-local" id="start_time" name="start_time" min="" max="" value="">
+        <label for="stop_time">To:</label>
+        <input type="datetime-local" id="stop_time" name="stop_time" min="" max="" value=""> -->
+        <input type="hidden" id="prt_folder" name="prt_folder" value="">
+        <input type="submit" value="Submit">
+      </form>
+
+      <p id="notes" style="text-align:center;"><strong>Note:</strong> This PRT file contains about hour log messages, to reduce overall network traffic volume, the green bar would contain about hour log messages.</p>
+    </div>
+
+</body>
+</html>
+<script>
+
+function openPage(pageName, elmnt, color) {
+  // Hide all elements with class="tabcontent" by default */
+  var i, tabcontent, tablinks;
+  var prt_folder = document.getElementById('prt_folder').value;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Remove the background color of all tablinks/buttons
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = "";
+  }
+
+  tablinks = document.getElementsByClassName("tablink1");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = "";
+  }
+
+  // Add the specific color to the button used to open the tab content
+  elmnt.style.backgroundColor = color;
+
+  // Show the specific tab content
+  document.getElementById("message_iframe").style.display = "block";
+  document.getElementById('htmlfiles').src="./"+pageName+"?prt_folder="+prt_folder;
+
+}
+
+function chooseTime(elmnt, color) {
+  // Hide all elements with class="tabcontent" by default */
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Remove the background color of all tablinks/buttons
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = "";
+  }
+
+  tablinks = document.getElementsByClassName("tablink1");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = "";
+  }
+
+  // Add the specific color to the button used to open the tab content
+  elmnt.style.backgroundColor = color;
+
+  // Show the specific tab content
+  document.getElementById("chooseTime").style.display = "block";
+
+}
+function setBubble(range, bubble) {
+  const val = range.value;
+  const min = range.min ? range.min : 0;
+  const max = range.max ? range.max : 100;
+  const newVal = Number(((val - min) * 100) / (max - min));
+  bubble.innerHTML = val;
+
+  // Sorta magic numbers based on size of the native UI thumb
+  bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
+}
+// function myScript(e){
+//   htmlf=e.target.innerText;
+//   <!-- alert(e.target.value); -->
+//   var prt_folder = document.getElementById('prt_folder').value;
+//   // var form, input;
+//   // form = document.createElement("form");
+//   // form.action = htmlf;
+//   // form.target = "htmlfiles";
+//   // input = document.createElement("input");
+//   // input.type = "hidden";
+//   // input.name = "prt_folder";
+//   // input.value = prt_folder;
+//   // form.appendChild(input);
+//   // document.body.appendChild(form);
+//   // form.submit();
+//   document.getElementById('htmlfiles').src="./"+htmlf+"?prt_folder="+prt_folder;
+// }
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+const
+range = document.getElementById('start_time'),
+rangeV = document.getElementById('bubble'),
+setValue = ()=>{
+  const
+  newValue = Number( (range.value - range.min) * 100 / (range.max - range.min) );
+  rangeV.innerHTML = `<span>${range.value}</span>`;
+  rangeV.style.left = `calc(20% + ${newValue}% * 0.42)`;
+};
+document.addEventListener("DOMContentLoaded", setValue);
+range.addEventListener('input', setValue);
+</script>

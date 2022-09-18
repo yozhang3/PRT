@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    html, body {
+      background-image: url("background.jpeg");
+      height:100%;
+      width:100%;
+    }
+
+    .bigform{
+      background:rgba(255,255,255,0);
+      margin-top: 10%;
+      margin-bottom: 10%;
+      margin-left: 10%;
+      margin-right: 10%;
+      height: 80%;
+    }
+    .upload-container {
+        align-items: center;
+        justify-content: center;
+        /* flex-wrap: wrap; */
+        height:80%;
+        width:100%;
+        display:flex;
+        /* background: #f1f1f1; */
+        /* color: #3f8188;
+        font-weight: 900; */
+        background:rgba(255,255,255,1);
+        /* top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%); */
+    }
+    .upload-container .droparea {
+        /* border: 1px solid #92b0b3; */
+        /* background: #c1f1f1; */
+        /* outline: 2px dashed #92b0b3; */
+        /* outline-offset: -10px; */
+        padding: 0%;
+        opacity: 0;
+        /* text-align: center; */
+        width: 80%;
+        height:64%;
+        margin-top:0%;
+        /* background:rgba(255,255,255,1); */
+        position: absolute;
+        z-index: 1;
+    }
+    .upload-container .droparea_text {
+        /* border: 1px solid #92b0b3; */
+        /* background: #c1f1f1; */
+        /* outline: 2px dashed #92b0b3; */
+        /* outline-offset: -10px; */
+        padding: 0%;
+        opacity: 1;
+        text-align: center;
+        width: 80%;
+        background:rgba(255,255,255,1);
+        position: absolute;
+        z-index: 0;
+    }
+    .upload-container .droparea:hover{
+        cursor: pointer;
+        background:rgba(0,0,0,1);
+    }
+
+    .button {
+        /* position: relative; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* background: #a1f1f1; */
+        background:rgba(255,255,255,0);
+        height:20%;
+        width: 100%;
+        /* top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%); */
+    }
+    .upload {
+        font-family: Arial;
+        font-size: 2em;
+    }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  </head>
+  <body>
+
+    <form
+      enctype="multipart/form-data"
+      action="/upload"
+      method="POST"
+      class="bigform"
+    >
+  <div class="upload-container">
+      <input class="droparea" type="file" name="myFile" id="myFile" value="choose PRT file" onchange="pressed()"/>
+      <div class="droparea_text">
+        <img id="droparea_img" src="cloud.png">
+        <p id="droparea_txt">drop the PRT file here or click</p>
+      </div>
+  </div>
+  <div class="button">
+      <input class="upload" type="submit" value="upload" />
+  </div>
+    </form>
+
+</html>
+<script>
+function pressed(){
+  var a = document.getElementById('myFile');
+  if(a.value == "")
+    {
+        document.getElementById('droparea_txt').innerHTML = "drop the PRT file here or click";
+        document.getElementById('droparea_img').src="cloud.png";
+    }
+  else
+    {
+        var theSplit = a.value.split('\\');
+        document.getElementById('droparea_txt').innerHTML = theSplit[theSplit.length-1];
+        document.getElementById('droparea_img').src="tar.gz.png";
+    }
+}
+</script>
